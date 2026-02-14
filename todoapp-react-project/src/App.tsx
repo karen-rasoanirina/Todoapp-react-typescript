@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from "react"
 import Todo from "./components/todo"
+import { Construction } from "lucide-react"
 
 type Priority = "Urgente" | "Moyenne" | "Basse"
 
@@ -39,6 +40,11 @@ function App() {
 
   }
 
+  function deleteTodos (id:number) : void{
+   const newTodos = todos.filter(todo => todo.id != id)
+   setTodos(newTodos)
+  }
+
   let filteredTodos: Todo[] = [];
 
   if (filter === "Tous"){
@@ -46,6 +52,11 @@ function App() {
   } else {
     filteredTodos = todos.filter(todo=>todo.priority == filter)
   }
+
+  const urgentCount = todos.filter(t=>t.priority === 'Urgente').length
+  const mediumCount = todos.filter(t=>t.priority === 'Moyenne').length
+  const lowCount = todos.filter(t=>t.priority === 'Basse').length
+  const totalCount = todos.length
 
  return (
     <>
@@ -77,25 +88,41 @@ function App() {
       </button>
       </div>
       <div className="flex flex-col h-fit gap-4">
-        <div className="flex ">
+        <div className="flex gap-2">
           <button 
           className={`btn btn-soft ${filter == "Tous" ? "btn btn-primary" : "" } `}
           onClick={()=>setFilter("Tous")}>
-            Tous
+            Tous ({totalCount})
+          </button>
+          <button 
+          className={`btn btn-soft ${filter == "Urgente" ? "btn btn-primary" : "" } `}
+          onClick={()=>setFilter("Urgente")}>
+          Urgente ({urgentCount})
+          </button>
+          <button 
+          className={`btn btn-soft ${filter == "Moyenne" ? "btn btn-primary" : "" } `}
+          onClick={()=>setFilter("Moyenne")}>
+            Moyenne ({mediumCount})
+          </button>
+           <button 
+          className={`btn btn-soft ${filter == "Basse" ? "btn btn-primary" : "" } `}
+          onClick={()=>setFilter("Basse")}>
+            Basse ({lowCount})
           </button>
            </div>
         {filteredTodos.length > 0 ? (
          <ul className="divide-y divide-gray-700">
          {filteredTodos.map(todo=>(
-          <Todo todo={todo}/>
+          <Todo onDelete={()=>deleteTodos(todo.id)} todo={todo}/>
          ))}
 
          </ul>
-        ):(
-          <div>
-            test
+        ):
+          <div className="flex flex-col justify-center items-center">
+            <Construction className="w-40 h-40" strokeWidth="1" color="gray"/>
+            <p className="text-md">Aucune tache trouvée pour cette catégorie</p>
           </div>
-        )}
+        }
       </div>
 
 
