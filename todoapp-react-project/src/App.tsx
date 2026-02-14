@@ -1,12 +1,10 @@
+
 import { useEffect, useState } from "react"
+import Todo from "./components/todo"
 
 type Priority = "Urgente" | "Moyenne" | "Basse"
 
-type Todo = {
-  id: number,
-  text: string,
-  priority: Priority
-}
+
 
 function App() {
   const [input, setInput] = useState("")
@@ -51,8 +49,10 @@ function App() {
 
  return (
     <>
-    <div className="flex justify-center">
-      <div className="flex gap-4 w-2/3 border-sm bg-base-300 my-10">
+    
+    <div className="flex justify-center ">
+      <div className="flex flex-col w-2/3 ">
+      <div className="flex gap-4 border-sm bg-base-300 my-10">
       <input 
       className="input w-full" 
       placeholder="Ajouter une tache"
@@ -75,18 +75,22 @@ function App() {
       onClick={addTodo}>
       Ajouter
       </button>
-      <div className="flex flex-wrap h-fit">
-        <div>
+      </div>
+      <div className="flex flex-col h-fit gap-4">
+        <div className="flex ">
           <button 
           className={`btn btn-soft ${filter == "Tous" ? "btn btn-primary" : "" } `}
           onClick={()=>setFilter("Tous")}>
             Tous
           </button>
-        </div>
-        {filteredTodos.length ? (
-          <div>
-            filteredTodos
-          </div>
+           </div>
+        {filteredTodos.length > 0 ? (
+         <ul className="divide-y divide-gray-700">
+         {filteredTodos.map(todo=>(
+          <Todo todo={todo}/>
+         ))}
+
+         </ul>
         ):(
           <div>
             test
@@ -96,8 +100,8 @@ function App() {
 
 
 
-      </div>
-
+      
+       </div>  
     </div>
     
     </>
