@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react"
-import Todo from "./components/todo"
+import Todo from "./components/Todo"
 import { Construction } from "lucide-react"
 
 type Priority = "Urgente" | "Moyenne" | "Basse"
@@ -16,6 +16,7 @@ function App() {
   const [todos, setTodos] = useState<Todo[]>(initialTodos)
 
   const [filter, setFilter] = useState <Priority | "Tous"> ("Tous")
+  const [selectedTodos, setSelectedTodos]=useState<Set<number>>(new Set())
 
   useEffect(()=>{
   localStorage.setItem("todos", JSON.stringify(todos))
@@ -53,6 +54,29 @@ function App() {
     filteredTodos = todos.filter(todo=>todo.priority == filter)
   }
 
+function toggleSelectedTodos(id:number) : void{
+const newSelected = new Set(selectedTodos)
+if(selectedTodos.has(id)){
+  newSelected.delete(id)
+}else{
+  newSelected.add(id)
+}
+setSelectedTodos(newSelected)
+
+}
+function finishSelected (){
+  const newTodos = todos.filter((todo) =>
+{if (selectedTodos.has(todo.id)){
+  return false;
+} else {
+  return true;
+}}
+  )
+ setTodos(newTodos)
+ setSelectedTodos(new Set())  
+  
+}
+
   const urgentCount = todos.filter(t=>t.priority === 'Urgente').length
   const mediumCount = todos.filter(t=>t.priority === 'Moyenne').length
   const lowCount = todos.filter(t=>t.priority === 'Basse').length
@@ -87,7 +111,8 @@ function App() {
       Ajouter
       </button>
       </div>
-      <div className="flex flex-col h-fit gap-4">
+      <div className="flex justify-between">
+        <div className="flex flex-col h-fit gap-4">
         <div className="flex gap-2">
           <button 
           className={`btn btn-soft ${filter == "Tous" ? "btn btn-primary" : "" } `}
@@ -113,7 +138,11 @@ function App() {
         {filteredTodos.length > 0 ? (
          <ul className="divide-y divide-gray-700">
          {filteredTodos.map(todo=>(
-          <Todo onDelete={()=>deleteTodos(todo.id)} todo={todo}/>
+          <Todo 
+          onDelete={()=>deleteTodos(todo.id)} 
+          todo={todo} 
+          isSelected={selectedTodos.has(todo.id)}
+          onToggleSelect={toggleSelectedTodos}/>
          ))}
 
          </ul>
@@ -123,6 +152,13 @@ function App() {
             <p className="text-md">Aucune tache trouvée pour cette catégorie</p>
           </div>
         }
+      </div>
+      <button 
+      className="btn btn-primary"
+      disabled={selectedTodos.size === 0}
+      onClick={finishSelected}>
+        Finir la sélection ({selectedTodos.size})
+      </button>
       </div>
 
 

@@ -9,15 +9,22 @@ type Todo = {
 type Props = {
     todo: Todo
     onDelete : () => void
+    isSelected : boolean
+    onToggleSelect: (id: number) => void
 }
 
 
 
-function Todo({todo, onDelete}:Props) {
+function Todo({todo, onDelete, isSelected, onToggleSelect}:Props) {
   return (
     <div className="flex justify-between">
         <div className="flex gap-2 p-3">
-            <input type="checkbox"  className="checkbox checkbox-primary checkbox-sm " />
+            <input 
+            type="checkbox"  
+            className="checkbox checkbox-primary checkbox-sm " 
+             checked={isSelected}
+             onChange={()=>onToggleSelect(todo.id)}
+             />
             <li  key={todo.id}>
             {todo.text}
             </li>
@@ -32,6 +39,7 @@ function Todo({todo, onDelete}:Props) {
         <button
         className="btn btn-error btn-soft"
         onClick={onDelete}
+       
         >
             <Trash className="w-4 h-4"/>
         </button>
